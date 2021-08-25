@@ -1,0 +1,58 @@
+# To really understand GraphQL, go to http://graphql.org/guide/
+
+
+
+type Query {
+  devoluciones(initialDate: String!, 
+    finalDate: String!, 
+    cc: String,
+    orderformid: String,
+    status:String!, 
+    page:Int,
+    offset:Int): Devoluciones @cacheControl(maxAge: 50)
+}
+
+type Devoluciones{
+
+  items:[HistoricoDevolucion]
+
+
+}
+
+type HistoricoDevolucion
+{
+      idhistorico:String,
+      devolucion:Devolucion,
+      estado:String,
+      fechaEstado:String
+
+     
+}
+
+type Devolucion{
+
+  iddevolucion: Int,
+  orderformid: String,
+  motivo: String,
+  totalProductos: Int,
+  fechacreado: String,
+  valorTotal: Int,
+  cliente:Cliente
+  seller:Seller
+
+}
+
+type Cliente{
+
+  name:String,
+  cedula:String
+}
+
+type Seller{
+
+    id:Int,
+    name:String
+}
+
+
+
