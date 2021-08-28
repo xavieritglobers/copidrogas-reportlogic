@@ -44,10 +44,7 @@ export async function createCSVReport(ctx: Context, next: () => Promise<any>) {
     En caso de que el reporte ya exista en el MD, no se genera de nuevo, solo se enviará el email*/ 
     if(items.length>0)
     {
-     
       
-
-  
             const docStatus = await mdHandler.createMDReport(hash, seller, items)
             if(docStatus.Id)
             {
@@ -67,29 +64,6 @@ export async function createCSVReport(ctx: Context, next: () => Promise<any>) {
  }
  
 
-/*
-
-    let dataToFilter = ctx.request.url.split("?")[1]
-    let finalDataToFilter = dataToFilter.split("&")
-
-    let iniDate = finalDataToFilter[0].split("=")[1]
-    let finDate = finalDataToFilter[1].split("=")[1]
-    let cc = finalDataToFilter[2].split("=")[1]
-    let orderformid = finalDataToFilter[3].split("=")[1]
-    let status = finalDataToFilter[4].split("=")[1].replace("%20", " ")
-
-    
-    
-    console.log(">>>>iniDate", iniDate)
-    console.log(">>>>finDate", finDate)
-    console.log(">>>>cc", cc)
-    console.log(">>>>orderformid", orderformid)
-    console.log(">>>>status", status)
-
-    /*Validar que el reporte no exista en la BD */
-
-
-    /*Pedir  */
   
     await next()
   }
