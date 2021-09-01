@@ -5,6 +5,7 @@ import { InstanceOptions, IOContext, MasterData } from "@vtex/api";
 
 
 
+
 export class DevolucionClient extends MasterData {
     constructor(context: IOContext, options?: InstanceOptions) {
         super(context, {
@@ -24,18 +25,24 @@ export class DevolucionClient extends MasterData {
           },
         });
       }
+
+     
   
  private getInfoFromMD = async (
     initialDate: Date, 
     finalDate: Date, 
     cc: string,
     orderformid: string,
-    status:string, 
+    status:string,
+    sellerId:string, 
     page:number,
     offset:number ) =>
     {
 
         try{
+
+
+          
 
         initialDate= new Date(initialDate)
         finalDate = new Date(finalDate)
@@ -45,21 +52,54 @@ export class DevolucionClient extends MasterData {
         let initialDateFormated = `${initialDate.getFullYear()}-${initialDate.getMonth()+1<10?"0"+(initialDate.getMonth()+1):initialDate.getMonth()+1}-${initialDate.getDate()<10?"0"+initialDate.getDate():initialDate.getDate()}`
         let finalDateFormated = `${finalDate.getFullYear()}-${finalDate.getMonth()+1<10?"0"+(finalDate.getMonth()+1):finalDate.getMonth()+1}-${finalDate.getDate()<10?"0"+finalDate.getDate():finalDate.getDate()}`
       
-        console.log(initialDateFormated, finalDateFormated)
-
-
-        console.log(`${finalDate}${initialDate}${cc}${orderformid}${status}${page}${offset}`)
-
-        
-      let fields=[
       
-                "email",
-                "sellerName",
-                "date"
+     
+     let fields=[
+      
+        "address",
+				"city",
+				"date",
+				"email",
+				"fullRefundPrice",
+				"identification",
+				"idReturn",
+				"name",
+				"orderID",
+				"products",
+				"reason",
+				"sellerID",
+				"sellerName",
+				"state",
+        "id"
         ]
        
-    let conditions = `date between ${initialDateFormated} AND ${finalDateFormated} `
+    let conditions = `date between ${initialDateFormated}  AND ${finalDateFormated}  `
 
+   
+    
+    if(cc!=='' && cc!=='undefined' && typeof cc!=='undefined')
+    {
+       conditions+=` AND identification = '${cc}' `
+    }
+
+    if(status!=='Todos')
+    {
+      conditions += `AND state='${status}'`
+    }
+
+    if(orderformid!=='' && orderformid!=='undefined' && typeof orderformid!=='undefined')
+    {
+      conditions+=` AND orderID = '${orderformid}' `
+    }
+
+    if(sellerId!=='Todos')
+    {
+      conditions+=` AND sellerName = '${sellerId}' `
+    }
+
+    
+   
+  
 
 
         const d =  await this.searchDocumentsWithPaginationInfo({
@@ -67,11 +107,11 @@ export class DevolucionClient extends MasterData {
             fields: fields,
             where: conditions,
             sort:'date ASC',
-            pagination:{page:1,pageSize:5}
+            pagination:{page:page,pageSize:offset}
         });
         
 
-        
+      
     
 
         return d
@@ -90,9 +130,9 @@ export class DevolucionClient extends MasterData {
     cc: string,
     orderformid: string,
     status:string, 
+    sellerId:string,
     page:number,
     offset:number ) => {
-
 
 
     try {
@@ -104,17 +144,51 @@ export class DevolucionClient extends MasterData {
         cc,
         orderformid,
         status, 
+        sellerId,
         page,
         offset)
 
 
-
-        console.log("DATA", d)
-   
-
-
+      const data:any = d.data
       
-    return []
+       
+      const devs = [];
+
+     
+
+      for(var i = 0;i<data.length;i++)
+      {
+
+        const dev = {
+
+          orderformid:data[i].orderID,
+          fechacreado:data[i].date,
+          seller:{name:data[i].sellerName, id:data[i].sellerID},
+          cliente:{name:data[i].name, cedula:data[i].identification, address:data[i].address, city:data[i].city},
+          status:data[i].state,
+          totalprods:data[i].products.length,
+          motivo:data[i].reason,
+          totaldevolucion:data[i].fullRefundPrice,
+          documentid:data[i].id
+
+
+
+
+        }
+        devs.push(dev)
+      }
+
+
+    
+
+      const devoluciones = {
+        devoluciones:devs,
+        paginacion:d.pagination
+      }
+
+     
+     
+    return devoluciones
       
 
 

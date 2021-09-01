@@ -8,6 +8,7 @@ import {
 
 import { Clients } from './clients'
 //import { createReport } from "./resolvers/createReport";
+import { historicoDevoluciones } from './resolvers/historicoDevolucion'
 import { devoluciones } from './resolvers/devolucion'
 import { createCSVReport } from './middlewares/reports'
 import { viewCVSReport } from './middlewares/reports'
@@ -32,7 +33,8 @@ export default new Service<Clients, RecorderState, ParamsContext>({
   graphql: {
     resolvers: {
       Query: {
-        devoluciones
+        devoluciones,
+        historicoDevoluciones
       
        
       },

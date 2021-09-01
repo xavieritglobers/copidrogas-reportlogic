@@ -8,51 +8,60 @@ type Query {
     cc: String,
     orderformid: String,
     status:String!, 
-    page:Int,
-    offset:Int): Devoluciones @cacheControl(maxAge: 50)
+    sellerId:String!,
+    page:Int!,
+    offset:Int!): Devoluciones @cacheControl(maxAge: 50),
+    
+    historicoDevoluciones(id:String!): Historicos  @cacheControl(maxAge: 50)
 }
+type Historicos{
+  historicos:[HistoricoDevoluciones]
+}
+type HistoricoDevoluciones{
 
+  date:String,
+  comments:String,
+  attachements:String,
+  state:String
+
+}
 type Devoluciones{
+  
+   
+  devoluciones:[Devolucion],
+  paginacion:Paginacion
 
-  items:[HistoricoDevolucion]
 
-
-}
-
-type HistoricoDevolucion
-{
-      idhistorico:String,
-      devolucion:Devolucion,
-      estado:String,
-      fechaEstado:String
-
-     
 }
 
 type Devolucion{
 
-  iddevolucion: Int,
-  orderformid: String,
-  motivo: String,
-  totalProductos: Int,
-  fechacreado: String,
-  valorTotal: Int,
-  cliente:Cliente
-  seller:Seller
+          orderformid:String,
+          fechacreado:String,
+          seller:Seller,
+          cliente:Cliente,
+          status:String,
+          totalprods:Int,
+          motivo:String,
+          totaldevolucion:Float,
+          documentid:String
+  
+
 
 }
 
 type Cliente{
-
   name:String,
-  cedula:String
+  cedula:String,
+  address:String,
+  city:String
 }
-
 type Seller{
-
-    id:Int,
-    name:String
+  name:String,
+  id:String
 }
-
-
-
+type Paginacion{
+  page:Int,
+  pageSize:Int,
+  total:Int
+}

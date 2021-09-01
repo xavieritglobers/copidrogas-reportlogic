@@ -12,7 +12,11 @@ export async function createCSVReport(ctx: Context, next: () => Promise<any>) {
 
 
     const body = await json(ctx.req)
-    const {items, reportFilter} = body
+
+  
+    const {items, reportFilter, paginacion} = body
+
+ 
 
     let inidate = reportFilter.initialDate.split("T")[0]
     inidate = inidate.split("-")
@@ -25,12 +29,13 @@ export async function createCSVReport(ctx: Context, next: () => Promise<any>) {
 
     const fDate = `${finidate[1]}/${finidate[2]}/${finidate[0]}`
     
-    const seller = ctx.request.header['x-vtex-caller']
+    const sellerEmail = ctx.request.header['x-vtex-caller']
+    const sellerId = reportFilter.sellerId
 
     const orderformid = reportFilter.orderformid
     const cc = reportFilter.cc 
     const estado = reportFilter.status
-    const cadforname = `${seller}${iDate}${fDate}${orderformid}${cc}${estado}`
+    const cadforname = `${sellerId}${iDate}${fDate}${orderformid}${cc}${estado}`
 
     /*
     GENERAMOS UN HASH CON EL FILTRO, 
@@ -45,14 +50,12 @@ export async function createCSVReport(ctx: Context, next: () => Promise<any>) {
     if(items.length>0)
     {
       
-            const docStatus = await mdHandler.createMDReport(hash, seller, items)
-            if(docStatus.Id)
+            const docStatus = await mdHandler.createMDReport(reportFilter, hash, sellerEmail, items, paginacion)
+          
+          
+            if(docStatus.Id || docStatus.length!==0)
             {
     
-              console.log("DOCSTATUS", docStatus)
-            
-            
-            
               ctx.status = 200
               ctx.body = ""
               ctx.set('Cache-Control', 'private')
@@ -78,11 +81,11 @@ export async function createCSVReport(ctx: Context, next: () => Promise<any>) {
       } = ctx
 
       
-      const data = await mdHandler.viewMDReport(hash.substr(3))
+      const data:any = await mdHandler.viewMDReport(hash.substr(3))
     
       try {
         const json2csvParser = new Parser();
-        const csv = json2csvParser.parse(data);
+        const csv = json2csvParser.parse(data?.reportFile);
         
         ctx.status = 200
         ctx.set('Content-disposition', `attachment; filename=${hash}.csv`);
