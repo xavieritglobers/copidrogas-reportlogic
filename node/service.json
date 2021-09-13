@@ -7,7 +7,7 @@
   "routes": {
     "status": {
       "path": "/report",
-      "public": true
+      "public": false
     },
     "viewReport": {
       "path": "/viewreport/:hash",
