@@ -41,13 +41,13 @@ export async function createCSVReport(ctx: Context, next: () => Promise<any>) {
     GENERAMOS UN HASH CON EL FILTRO, 
       PARA GUARDAR EL ARCHIVO Y VALIDAR SI YA EXISTE*/ 
     const hash = crypto.createHash('md5').update(cadforname).digest('hex');
-    
-    
+   
+    const today = `${new Date().getMonth()+1}/${new Date().getDate()}/${new Date().getFullYear()}`
     
      /*Si recibo items vacío, genero el reporte completo de la info de DB
     Si recibo items con data, uso esa data, para crear el CSV. 
     En caso de que el reporte ya exista en el MD, no se genera de nuevo, solo se enviará el email*/ 
-    if(items.length>0)
+    if(items.length>0 && today!==fDate && today!==iDate)
     {
       
             const docStatus = await mdHandler.createMDReport(reportFilter, hash, sellerEmail, items, paginacion)
@@ -64,7 +64,14 @@ export async function createCSVReport(ctx: Context, next: () => Promise<any>) {
            
             
   
- }
+  }
+  else
+  {
+    ctx.status = 200
+    ctx.body = ""
+    ctx.set('Cache-Control', 'private')
+
+  }
  
 
   

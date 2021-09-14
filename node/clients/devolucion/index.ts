@@ -166,7 +166,7 @@ export class DevolucionClient extends MasterData {
           seller:{name:data[i].sellerName, id:data[i].sellerID},
           cliente:{name:data[i].name, cedula:data[i].identification, address:data[i].address, city:data[i].city},
           status:data[i].state,
-          totalprods:data[i].products.length,
+          totalprods:data[i].products?.length,
           motivo:data[i].reason,
           totaldevolucion:data[i].fullRefundPrice,
           documentid:data[i].id
